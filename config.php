@@ -17,6 +17,7 @@ return [
     "sync" => [
         "sql" => "select * FROM repair_table where id > #start_id#",
         "start_id" => 1,
+        "end_id" => 0,
         "primary_key" => "id",
     ],
 ];

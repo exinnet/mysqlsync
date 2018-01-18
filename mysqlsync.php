@@ -26,6 +26,7 @@ class MysqlSync
     public function run()
     {
         $last_id = $this->sync["start_id"];
+        $end_id = $this->sync["end_id"];
         $sql_pattern = $this->sync["sql"] . " limit 1";
         $pattern = "/from(.*?) where/i";
         preg_match($pattern, $sql_pattern, $match);
@@ -48,10 +49,13 @@ class MysqlSync
                 $count++;
                 $last_id = $row[$this->sync["primary_key"]];
             }
+            $this->total += $count;
             if ($count == 0) {
                 break; 
             }
-            $this->total += $count;
+            if ($end_id != 0 && $end_id <= $last_id) {
+                break;
+            }
         }
          
     }
