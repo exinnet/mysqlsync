@@ -27,7 +27,8 @@ class MysqlSync
     {
         $last_id = $this->sync["start_id"];
         $end_id = $this->sync["end_id"];
-        $sql_pattern = $this->sync["sql"] . " limit 1";
+        $limit = isset($this->sync["page_size"]) ? $this->sync["page_size"] : 1000;
+        $sql_pattern = $this->sync["sql"] . " limit ". $limit;
         $pattern = "/from(.*?) where/i";
         preg_match($pattern, $sql_pattern, $match);
         if (!isset($match[1])) {
@@ -50,6 +51,7 @@ class MysqlSync
                 $last_id = $row[$this->sync["primary_key"]];
             }
             $this->total += $count;
+            echo "num:". $this->total ."\n";
             if ($count == 0) {
                 break; 
             }

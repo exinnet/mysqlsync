@@ -19,5 +19,6 @@ return [
         "start_id" => 1,
         "end_id" => 0,
         "primary_key" => "id",
+        "page_size" => "1",
     ],
 ];
