@@ -23,6 +23,17 @@ class MysqlSync
         $this->sync = $conf["sync"];
     }
 
+    private function create_values($values) {
+        $result = [];
+        foreach ($values as $value) {
+            if (is_null($value)) {
+                $result[] = "NULL"; 
+            } else {
+                $result[] = "'". addslashes($value) ."'";
+            }
+        }
+        return implode(",", $result); 
+    }
     public function run()
     {
         $last_id = $this->sync["start_id"];
@@ -44,8 +55,10 @@ class MysqlSync
                 $fields = array_keys($row);
                 $fields_str = implode("`,`", $fields);
                 $values = array_values($row);
-                $values_str = implode("','", array_map("addslashes", $values));
-                $insert_sql = "INSERT INTO $table (`$fields_str`) value('$values_str')"; 
+                
+                $values_str = $this->create_values($values);
+                $insert_sql = "INSERT INTO $table (`$fields_str`) value($values_str)"; 
+                echo $insert_sql."\n";
                 $this->conn["slave"]->exec($insert_sql);
                 $count++;
                 $last_id = $row[$this->sync["primary_key"]];
